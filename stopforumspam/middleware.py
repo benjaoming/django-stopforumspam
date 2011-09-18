@@ -19,7 +19,7 @@ class StopForumSpamMiddleware():
                     paths.append(reverse(path))
             return paths
         
-        if not request.method == 'POST' and False:
+        if not request.method == 'POST':
             return
         
         if sfs_settings.ALL_POST_REQUESTS:
