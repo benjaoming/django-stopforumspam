@@ -24,25 +24,30 @@ class Command(BaseCommand):
         
     def ensure_updated(self, force=False):
         last_update = models.Log.objects.filter(message=sfs_settings.LOG_MESSAGE_UPDATE)
-        do_update = False or force
+        do_update = force
         if not do_update and last_update.count() > 0:
-            last_update = last_update[0].inserted
             days_ago = datetime.now() - last_update
             if days_ago.days >= sfs_settings.CACHE_EXPIRE:
                 do_update = True
         else:
             do_update = True
-            last_update = None
         if do_update:
             print "Updating (this may take some time)"
             print "If you abort this command and want to rebuild, you have to use the --force option!"
-            self.do_update(delete_before=last_update)
+            self.do_update()
         else:
             print "Nothing to update"
     
     
     @transaction.commit_manually
-    def do_update(self, delete_before=None):
+    def do_update(self):
+
+        # After inserting all these ips, delete the old ones
+        last_update = models.Log.objects.filter(message=sfs_settings.LOG_MESSAGE_UPDATE)
+        delete_before = last_update[0].inserted if last_update.count() > 0 else None
+        if delete_before:
+            models.Cache.objects.filter(updated__lte=delete_before, permanent=False).delete()
+        
         # First log the update
         log = models.Log()
         log.message = sfs_settings.LOG_MESSAGE_UPDATE
@@ -62,12 +67,8 @@ class Command(BaseCommand):
             cache = models.Cache(ip=ip)
             cache.save()
             inserted = inserted + 1
-            if inserted % 10 == 0:
+            if inserted % 100 == 0:
                 print "Inserted %d of %d" % (inserted, total)
-        
-        # After inserting all these ips, delete the old ones
-        if delete_before:
-            models.Cache.objects.filter(updated_lte=delete_before, permanent=False).delete()
         
         transaction.commit()
 

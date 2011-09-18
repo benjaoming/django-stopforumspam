@@ -7,6 +7,9 @@ class StopForumSpamMiddleware():
 
     def process_request(self, request):
         
+        if sfs_settings.FORCE_ALL_REQUESTS:
+            return self.check_request_ip(request)
+        
         def compile_paths(path_list):
             paths = []
             for path in path_list:

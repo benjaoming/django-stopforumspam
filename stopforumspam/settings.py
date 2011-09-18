@@ -20,3 +20,5 @@ URLS_INCLUDE = getattr(settings, 'SFS_URLS_INCLUDE', [])
 SOURCE_ZIP = getattr(settings, 'SFS_SOURCE_ZIP', "http://www.stopforumspam.com/downloads/listed_ip_7.zip")
 ZIP_FILENAME = getattr(settings, 'SFS_ZIP_FILENAME', "listed_ip_7.txt")
 
+# Used for testing!
+FORCE_ALL_REQUESTS = getattr(settings, 'SFS_FORCE_ALL_REQUESTS', False)
