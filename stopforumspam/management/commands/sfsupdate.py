@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.core.management.base import BaseCommand
 from datetime import datetime
 
@@ -10,13 +11,12 @@ import zipfile
 from optparse import make_option
 
 class Command(BaseCommand):
-    args = ''
+    args = '--force'
     help = 'Updates the database with the latest IPs from stopforumspam.com'
     option_list = BaseCommand.option_list + (
-        make_option('--force',
-            dest='force',
-            default=False,
-            help='Force update of options'),
+        make_option('--force', '-f', dest='force', default=False,
+                    action='store_true',
+                    help='Force update of options'),
         )
     
     def handle(self, *args, **options):
@@ -39,7 +39,9 @@ class Command(BaseCommand):
             self.do_update(delete_before=last_update)
         else:
             print "Nothing to update"
-            
+    
+    
+    @transaction.commit_manually
     def do_update(self, delete_before=None):
         # First log the update
         log = models.Log()
@@ -53,16 +55,20 @@ class Command(BaseCommand):
         z = zipfile.ZipFile(filename)
         ips = z.read(sfs_settings.ZIP_FILENAME)
         ips = ips.split("\n")
-        
+        ips = filter(lambda x: ip_match.match(x), ips)
+        inserted = 0
+        total = len(ips)
         for ip in ips:
-            if not ip_match.match(ip):
-                continue
             cache = models.Cache(ip=ip)
-            cache.save(force_insert=True)
+            cache.save()
+            inserted = inserted + 1
+            if inserted % 10 == 0:
+                print "Inserted %d of %d" % (inserted, total)
         
         # After inserting all these ips, delete the old ones
         if delete_before:
             models.Cache.objects.filter(updated_lte=delete_before, permanent=False).delete()
         
-        
+        transaction.commit()
+
     
