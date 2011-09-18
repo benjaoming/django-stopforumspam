@@ -28,4 +28,5 @@ setup(name='stopforumspam',
       ],
       url='https://overtag.dk/',
       classifiers=CLASSIFIERS,
+      include_package_data=True,
       )
