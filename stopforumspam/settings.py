@@ -22,3 +22,5 @@ ZIP_FILENAME = getattr(settings, 'SFS_ZIP_FILENAME', "listed_ip_7.txt")
 
 # Used for testing!
 FORCE_ALL_REQUESTS = getattr(settings, 'SFS_FORCE_ALL_REQUESTS', False)
+
+LOG_SPAM = getattr(settings, 'SFS_LOG_SPAM', True)

@@ -42,11 +42,9 @@ class Command(BaseCommand):
     @transaction.commit_manually
     def do_update(self):
 
-        # After inserting all these ips, delete the old ones
-        last_update = models.Log.objects.filter(message=sfs_settings.LOG_MESSAGE_UPDATE)
-        delete_before = last_update[0].inserted if last_update.count() > 0 else None
-        if delete_before:
-            models.Cache.objects.filter(updated__lte=delete_before, permanent=False).delete()
+        # Delete old cache
+        models.Cache.objects.filter(permanent=False).delete()
+        transaction.commit()
         
         # First log the update
         log = models.Log()

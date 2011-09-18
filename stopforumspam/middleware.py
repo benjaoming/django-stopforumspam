@@ -35,5 +35,8 @@ class StopForumSpamMiddleware():
         remote_ip = request.META['REMOTE_ADDR']
         
         if models.Cache.objects.filter(ip=remote_ip).count() > 0:
+            if sfs_settings.LOG_SPAM:
+                log = models.Log(message = "Spam received from %s" % remote_ip)
+                log.save()
             return HttpResponseForbidden("Goodbye, spammer")
     
