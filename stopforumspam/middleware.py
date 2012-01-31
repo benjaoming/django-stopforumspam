@@ -1,7 +1,7 @@
 import settings as sfs_settings
 import models
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseForbidden
+from django.shortcuts import render
 
 class StopForumSpamMiddleware():
 
@@ -34,9 +34,13 @@ class StopForumSpamMiddleware():
         
         remote_ip = request.META['REMOTE_ADDR']
         
-        if models.Cache.objects.filter(ip=remote_ip).count() > 0:
+        cache_entries = models.Cache.objects.filter(ip=remote_ip)
+        
+        if cache_entries.count() > 0:
             if sfs_settings.LOG_SPAM:
                 log = models.Log(message = "Spam received from %s" % remote_ip)
                 log.save()
-            return HttpResponseForbidden("Goodbye, spammer")
+            
+            return render(request, 'stopforumspam/denied.html', {"cache_entries": cache_entries,},
+                          status=403)
     
