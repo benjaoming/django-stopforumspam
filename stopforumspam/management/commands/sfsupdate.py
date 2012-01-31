@@ -23,10 +23,10 @@ class Command(BaseCommand):
         self.ensure_updated(options['force'])
         
     def ensure_updated(self, force=False):
-        last_update = models.Log.objects.filter(message=sfs_settings.LOG_MESSAGE_UPDATE)
+        last_update = models.Log.objects.filter(message=sfs_settings.LOG_MESSAGE_UPDATE).order_by('-inserted')
         do_update = force
         if not do_update and last_update.count() > 0:
-            days_ago = datetime.now() - last_update
+            days_ago = datetime.now() - last_update[0].inserted
             if days_ago.days >= sfs_settings.CACHE_EXPIRE:
                 do_update = True
         else:
