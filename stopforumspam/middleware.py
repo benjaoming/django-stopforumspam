@@ -2,6 +2,7 @@ import settings as sfs_settings
 import models
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
+from django.utils import ipv6
 
 class StopForumSpamMiddleware():
 
@@ -32,7 +33,7 @@ class StopForumSpamMiddleware():
     
     def check_request_ip(self, request):
         
-        remote_ip = request.META['REMOTE_ADDR']
+        remote_ip = ipv6._unpack_ipv4(request.META['REMOTE_ADDR'])
         
         cache_entries = models.Cache.objects.filter(ip=remote_ip)
         
