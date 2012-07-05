@@ -70,3 +70,12 @@ For testing you can force all requests to be checked.
 
     SFS_FORCE_ALL_REQUESTS = True   
 
+*************
+Cron Jobs
+*************
+You probably want to automatically update the list of blocked IP addresses every 24 hours or 48 hours.
+To do that, you can insert a line in crontab.
+
+    0 2 * * * cd /your/project/path/ && python manage.py sfsupdate
+
+The above would update at 2 AM every night.
