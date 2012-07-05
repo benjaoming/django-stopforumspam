@@ -13,7 +13,7 @@ class StopForumSpamMiddleware():
         def compile_paths(path_list):
             paths = []
             for path in path_list:
-                if path.starts_with("/"):
+                if path.startswith("/"):
                     paths.append(path)
                 else:
                     paths.append(reverse(path))
