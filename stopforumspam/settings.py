@@ -1,7 +1,7 @@
 from django.conf import settings
 
 CACHE_EXPIRE = getattr(settings, 'SFS_CACHE_EXPIRE', 1) #days
-LOG_EXPIRE = getattr(settings, 'SFS_LOG_EXPIRE', 1) #days
+LOG_EXPIRE = getattr(settings, 'SFS_LOG_EXPIRE', 30) #days
 
 # Inserted in Log model at every update
 LOG_MESSAGE_UPDATE = getattr(settings, 'SFS_LOG_MESSAGE_UPDATE', u'Log updated from stopforumspam.com')
