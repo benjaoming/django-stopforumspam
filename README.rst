@@ -62,6 +62,14 @@ To configure where to download the file from (you can MAX download 2 times a day
 
     SFS_SOURCE_ZIP = "http://www.stopforumspam.com/downloads/listed_ip_7.zip"  
 
+You can control how often at most the update should be performed
+
+    SFS_CACHE_EXPIRE = 1 #day
+
+...and how long back the log should remember the rejection of POSTS and IPs.
+
+    SFS_LOG_EXPIRE = 1 #days
+
 Remember to configure this as well -- it's the name of the file inside the .zip file:
 
     SFS_ZIP_FILENAME = "listed_ip_7.txt"
