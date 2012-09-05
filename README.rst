@@ -16,11 +16,7 @@ manage.py sfsupdate [--force]
 Installation
 ************
 
-At the moment there is no updated packages, so install directly from github using:
-
-    pip install git+git://github.com/benjaoming/django-stopforumspam.git
-
-The old release was installed by running:
+Install the latest 1.1 release from pypi:
 
     sudo pip install stopforumspam
 
