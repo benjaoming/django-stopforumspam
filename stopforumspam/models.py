@@ -1,5 +1,6 @@
 from django.db import models
-from datetime import timedelta, datetime
+from datetime import timedelta
+from django.utils import timezone
 import settings as sfs_settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -20,7 +21,7 @@ class Log(models.Model):
     def save(self):
         super(Log, self).save()
         # Delete old log messages
-        Log.objects.filter(inserted__lt=datetime.now()-timedelta(days=sfs_settings.LOG_EXPIRE)).delete()
+        Log.objects.filter(inserted__lt=timezone.now()-timedelta(days=sfs_settings.LOG_EXPIRE)).delete()
     
     class Meta:
         ordering = ('-inserted',)

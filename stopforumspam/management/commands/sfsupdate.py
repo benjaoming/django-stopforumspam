@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.core.management.base import BaseCommand
-from datetime import datetime
+from django.utils import timezone
 
 from stopforumspam import models
 from stopforumspam import settings as sfs_settings
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         last_update = models.Log.objects.filter(message=sfs_settings.LOG_MESSAGE_UPDATE).order_by('-inserted')
         do_update = force
         if not do_update and last_update.count() > 0:
-            days_ago = datetime.now() - last_update[0].inserted
+            days_ago = timezone.now() - last_update[0].inserted
             if days_ago.days >= sfs_settings.CACHE_EXPIRE:
                 do_update = True
         else:
