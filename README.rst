@@ -16,7 +16,7 @@ manage.py sfsupdate [--force]
 Installation
 ************
 
-Install the latest 1.1 release from pypi:
+Install the latest release from pypi:
 
     sudo pip install stopforumspam
 
@@ -84,6 +84,6 @@ Cron Jobs
 You probably want to automatically update the list of blocked IP addresses every 24 hours or 48 hours.
 To do that, you can insert a line in crontab.
 
-    0 2 * * * cd /your/project/path/ && python manage.py sfsupdate
+    0 2 * * * python /your/project/path/manage.py sfsupdate
 
 The above would update at 2 AM every night.
