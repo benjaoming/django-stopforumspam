@@ -58,9 +58,20 @@ To only include some URLS (only works if SFS_ALL_POST_REQUEST=False):
 
     SFS_URLS_INCLUDE = ["url_name", "/url/path"]
 
+-------------------------------
+Synching with stopforumspam.com
+-------------------------------
+
+Be nice to their servers and remember that they have strict enforcements on the files that they offer. So before
+you start testing, you could consider using a local file as a test.
+
 To configure where to download the file from (you can MAX download 2 times a day) - see http://www.stopforumspam.com for more resources:
 
     SFS_SOURCE_ZIP = "http://www.stopforumspam.com/downloads/listed_ip_7.zip"  
+
+But you should really use a local file if you have more than 1 Django project with stopforumspam running from the same IP address. To do this, use a local protocol:
+
+    SFS_SOURCE_ZIP = "file:///path/to/listed_ip_7.zip"
 
 You can control how often at most the update should be performed
 
@@ -86,4 +97,6 @@ To do that, you can insert a line in crontab.
 
     0 2 * * * python /your/project/path/manage.py sfsupdate
 
-The above would update at 2 AM every night.
+The above would update at 2 AM every night. If you have several projects and sync them with a local file, you can add:
+
+    0 2 * * * wget -O /tmp/listed_ip_7.zip http://www.stopforumspam.com/downloads/listed_ip_7.zip && python /your/project/path/manage.py sfsupdate
