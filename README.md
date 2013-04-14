@@ -1,6 +1,6 @@
-###############################
+================================
 django stopforumspam middleware
-###############################
+================================
 
 A django application that provides middleware for blocking IPs listed in
 stopforumspam.com's database.
@@ -30,11 +30,11 @@ Then add this to INSTALLED_APPS
 
 And run
 
-    ./manage.py syncdb
+    python manage.py syncdb
 
 To insert all the IPs run this command, which you should make a cronjob (run it every 24h).
 
-    ./manage.py sfsupdate
+    python manage.py sfsupdate
 
 You may remove stopforumspam from your INSTALLED_APPS after, if you do not
 wish to see it in your admin pages.
