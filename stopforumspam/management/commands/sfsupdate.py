@@ -61,13 +61,28 @@ class Command(BaseCommand):
         ips = filter(lambda x: ip_match.match(x), ips)
         inserted = 0
         total = len(ips)
+        objects_to_save = []
         for ip in ips:
             cache = models.Cache(ip=ip)
-            cache.save()
+            objects_to_save.append(cache)
             inserted = inserted + 1
             if inserted % 100 == 0:
-                print "Inserted %d of %d" % (inserted, total)
+                print "Object %d of %d found" % (inserted, total)
         
+        print "===================="
+        print " Saving to database "
+        print "===================="
+
+        if hasattr(models.Cache.objects, 'bulk_create'):
+            print "New django with bulk_create detected. Inserting everyting at once!"
+            models.Cache.objects.bulk_create(objects_to_save)
+        else:
+            print "Django<1.5, inserting one object at a time..."
+            for cnt,cache in enumerate(objects_to_save):
+                cache.save()
+                if cnt % 100 == 0:
+                    print "Object %d of %d saved" % (inserted, total)
+
         transaction.commit()
 
     
