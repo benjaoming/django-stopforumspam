@@ -12,9 +12,9 @@ manage.py sfsupdate [--force]
 ...and all IPs are stored in Django models so you can add your own as well
 (remember to mark them permanent so they don't get deleted!)
 
-************
+------------
 Installation
-************
+------------
 
 Install the latest release from pypi:
 
@@ -40,9 +40,9 @@ You may remove stopforumspam from your INSTALLED_APPS after, if you do not
 wish to see it in your admin pages.
 
 
-*************
+-------------
 Configuration
-*************
+-------------
 
 The following options exist for your project's settings.py file:
 
@@ -58,9 +58,7 @@ To only include some URLS (only works if SFS_ALL_POST_REQUEST=False):
 
     SFS_URLS_INCLUDE = ["url_name", "/url/path"]
 
--------------------------------
-Synching with stopforumspam.com
--------------------------------
+### Synching with stopforumspam.com
 
 Be nice to their servers and remember that they have strict enforcements on the files that they offer. So before
 you start testing, you could consider using a local file as a test.
@@ -89,9 +87,9 @@ For testing you can force all requests to be checked.
 
     SFS_FORCE_ALL_REQUESTS = True   
 
-*************
+---------
 Cron Jobs
-*************
+---------
 You probably want to automatically update the list of blocked IP addresses every 24 hours or 48 hours.
 To do that, you can insert a line in crontab.
 
