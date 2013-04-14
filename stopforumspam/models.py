@@ -1,6 +1,12 @@
 from django.db import models
 from datetime import timedelta
-from django.utils import timezone
+#from django.utils import timezone
+
+try:
+    from django.utils import timezone
+except ImportError:
+    from datetime import datetime as timezone
+
 import settings as sfs_settings
 from django.utils.translation import ugettext_lazy as _
 

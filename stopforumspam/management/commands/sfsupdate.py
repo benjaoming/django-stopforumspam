@@ -1,6 +1,10 @@
 from django.db import transaction
 from django.core.management.base import BaseCommand
-from django.utils import timezone
+
+try:
+    from django.utils import timezone
+except ImportError:
+    from datetime import datetime as timezone
 
 from stopforumspam import models
 from stopforumspam import settings as sfs_settings
@@ -39,12 +43,18 @@ class Command(BaseCommand):
             print "Nothing to update"
     
     
-    @transaction.commit_manually
+    @transaction.commit_manually()
     def do_update(self):
+        try:
+            self._do_update()
+            transaction.commit()
+        except Exception:
+            transaction.rollback()
+            raise
 
+    def _do_update(self):
         # Delete old cache
         models.Cache.objects.filter(permanent=False).delete()
-        transaction.commit()
         
         # First log the update
         log = models.Log()
@@ -54,7 +64,10 @@ class Command(BaseCommand):
         # For security purposes we test that each line is actually an IP address
         ip_match = re.compile(r"^(\d+)\.(\d+)\.(\d+)\.(\d+)$")
         
-        filename, __ = urllib.urlretrieve(sfs_settings.SOURCE_ZIP)
+        if sfs_settings.SOURCE_ZIP.startswith("file://"):
+            filename = sfs_settings.SOURCE_ZIP.split("file://")[1]
+        else:
+            filename, __ = urllib.urlretrieve(sfs_settings.SOURCE_ZIP)
         z = zipfile.ZipFile(filename)
         ips = z.read(sfs_settings.ZIP_FILENAME)
         ips = ips.split("\n")
@@ -82,7 +95,5 @@ class Command(BaseCommand):
                 cache.save()
                 if cnt % 100 == 0:
                     print "Object %d of %d saved" % (inserted, total)
-
-        transaction.commit()
 
     

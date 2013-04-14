@@ -35,7 +35,7 @@ package_data = dict(
 
 setup(name='stopforumspam',
       description='Django middleware for blocking IPs listed in stopforumspam.com',
-      long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+      long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
       author="Benjamin Bach",
       author_email="benjamin@overtag.dk",
       version='1.3',
