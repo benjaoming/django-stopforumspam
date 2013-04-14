@@ -1,20 +1,16 @@
-###############################
+================================
 django stopforumspam middleware
-###############################
+================================
 
-A django application that provides middleware for blocking IPs listed in
-stopforumspam.com's database.
+Tired of comment spam, form spam and dumb crawlers? A django application that provides middleware for blocking IPs listed in stopforumspam.com's database. A simple management command is provided for updating the database:
 
-A management command is provided for updating the database:
+    manage.py sfsupdate [--force]
 
-manage.py sfsupdate [--force]
+Using this command, all IPs are stored in Django models. Using django-admin, it's possible to add your own extra IP addresses on a permanent database.
 
-...and all IPs are stored in Django models so you can add your own as well
-(remember to mark them permanent so they don't get deleted!)
-
-************
+------------
 Installation
-************
+------------
 
 Install the latest release from pypi:
 
@@ -30,19 +26,19 @@ Then add this to INSTALLED_APPS
 
 And run
 
-    ./manage.py syncdb
+    python manage.py syncdb
 
 To insert all the IPs run this command, which you should make a cronjob (run it every 24h).
 
-    ./manage.py sfsupdate
+    python manage.py sfsupdate
 
 You may remove stopforumspam from your INSTALLED_APPS after, if you do not
 wish to see it in your admin pages.
 
 
-*************
+-------------
 Configuration
-*************
+-------------
 
 The following options exist for your project's settings.py file:
 
@@ -58,9 +54,7 @@ To only include some URLS (only works if SFS_ALL_POST_REQUEST=False):
 
     SFS_URLS_INCLUDE = ["url_name", "/url/path"]
 
--------------------------------
-Synching with stopforumspam.com
--------------------------------
+### Synching with stopforumspam.com
 
 Be nice to their servers and remember that they have strict enforcements on the files that they offer. So before
 you start testing, you could consider using a local file as a test.
@@ -89,9 +83,9 @@ For testing you can force all requests to be checked.
 
     SFS_FORCE_ALL_REQUESTS = True   
 
-*************
+---------
 Cron Jobs
-*************
+---------
 You probably want to automatically update the list of blocked IP addresses every 24 hours or 48 hours.
 To do that, you can insert a line in crontab.
 
