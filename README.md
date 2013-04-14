@@ -2,15 +2,11 @@
 django stopforumspam middleware
 ================================
 
-A django application that provides middleware for blocking IPs listed in
-stopforumspam.com's database.
+Tired of comment spam, form spam and dumb crawlers? A django application that provides middleware for blocking IPs listed in stopforumspam.com's database. A simple management command is provided for updating the database:
 
-A management command is provided for updating the database:
+    manage.py sfsupdate [--force]
 
-manage.py sfsupdate [--force]
-
-...and all IPs are stored in Django models so you can add your own as well
-(remember to mark them permanent so they don't get deleted!)
+Using this command, all IPs are stored in Django models. Using django-admin, it's possible to add your own extra IP addresses on a permanent database.
 
 ------------
 Installation
