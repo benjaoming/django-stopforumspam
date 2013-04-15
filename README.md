@@ -2,33 +2,35 @@
 django stopforumspam middleware
 ================================
 
-Tired of comment spam, form spam and dumb crawlers? A django application that provides middleware for blocking IPs listed in stopforumspam.com's database. A simple management command is provided for updating the database:
+Tired of comment spam, form spam and dumb crawlers? A django application that provides middleware for blocking IPs listed in stopforumspam.com's database. It only reacts on POST requests, so don't worry about a huge table of rules having to be passed at every request. It's quite painless.
+
+A simple management command is provided for updating the database from stopforumspam.com:
 
     manage.py sfsupdate [--force]
 
-Using this command, all IPs are stored in Django models. Using django-admin, it's possible to add your own extra IP addresses on a permanent database.
+Using this command, all IPs are stored in Django models, and using django-admin, it's possible to add your own extra IP addresses on a permanent database.
 
 ------------
 Installation
 ------------
 
-Install the latest release from pypi:
+1. Install the latest release from pypi:
 
     sudo pip install stopforumspam
 
-Add this to settings.MIDDLEWARE_CLASSES
+2. Add this to settings.MIDDLEWARE_CLASSES
 
     'stopforumspam.middleware.StopForumSpamMiddleware'
     
-Then add this to INSTALLED_APPS
+3. Then add this to INSTALLED_APPS
 
     'stopforumspam'
 
-And run
+4. And run:
 
     python manage.py syncdb
 
-To insert all the IPs run this command, which you should make a cronjob (run it every 24h).
+5. To insert all the IPs run this command, which you should make a cronjob (run it every 24h).
 
     python manage.py sfsupdate
 
