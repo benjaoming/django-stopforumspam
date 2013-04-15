@@ -8,11 +8,23 @@ except ImportError:
 
 from stopforumspam import models
 from stopforumspam import settings as sfs_settings
+from django.conf import settings
 
 import re
 import urllib
 import zipfile
 from optparse import make_option
+
+def safe_bulk_create(objs):
+    """Wrapper to overcome the size limitation of standard bulk_create()"""
+    if len(objs) == 0: return
+    if not 'sqlite' in settings.DATABASES['default']['ENGINE']:
+        objs[0].__class__.objects.bulk_create(objs)
+    else:
+        BULK_SIZE = 900/len(objs[0].__class__._meta.fields)
+        for i in range(0,len(objs),BULK_SIZE):
+            print "SQLITE size limits: Bulk inserting %d objects" % BULK_SIZE
+            objs[0].__class__.objects.bulk_create(objs[i:i+BULK_SIZE])
 
 class Command(BaseCommand):
     args = '--force'
@@ -88,7 +100,7 @@ class Command(BaseCommand):
 
         if hasattr(models.Cache.objects, 'bulk_create'):
             print "New django with bulk_create detected. Inserting everyting at once!"
-            models.Cache.objects.bulk_create(objects_to_save)
+            safe_bulk_create(objects_to_save)
         else:
             print "Django<1.5, inserting one object at a time..."
             for cnt,cache in enumerate(objects_to_save):
