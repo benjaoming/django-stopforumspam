@@ -1,5 +1,5 @@
 from django.contrib import admin
-import models
+from stopforumspam import models
 
 class LogAdmin(admin.ModelAdmin):
     list_display = ('inserted', 'message')
