@@ -56,6 +56,10 @@ To only include some URLS (only works if SFS_ALL_POST_REQUEST=False):
 
     SFS_URLS_INCLUDE = ["url_name", "/url/path"]
 
+If your application is behind a set of proxy, you can use a specific HTTP Header as a source of the client IP:
+
+    SFS_HTTP_HEADER = "X-Forwarded-For"
+
 ### Synching with stopforumspam.com
 
 Be nice to their servers and remember that they have strict enforcements on the files that they offer. So before

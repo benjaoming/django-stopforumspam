@@ -32,8 +32,8 @@ class StopForumSpamMiddleware():
             return self.check_request_ip(request)
     
     def check_request_ip(self, request):
-        
-        remote_ip = ipv6._unpack_ipv4(request.META['REMOTE_ADDR'])
+
+        remote_ip = ipv6._unpack_ipv4(request.META[sfs_settings.HEADER])
         
         cache_entries = models.Cache.objects.filter(ip=remote_ip)
         

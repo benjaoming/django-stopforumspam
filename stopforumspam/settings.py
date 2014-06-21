@@ -24,3 +24,7 @@ ZIP_FILENAME = getattr(settings, 'SFS_ZIP_FILENAME', "listed_ip_7.txt")
 FORCE_ALL_REQUESTS = getattr(settings, 'SFS_FORCE_ALL_REQUESTS', False)
 
 LOG_SPAM = getattr(settings, 'SFS_LOG_SPAM', True)
+
+HEADER = getattr(settings, 'SFS_HTTP_HEADER', 'REMOTE_ADDR')
+if HEADER != 'REMOTE_ADDR':
+    HEADER = 'HTTP_' + HEADER.upper().replace('-','_')
