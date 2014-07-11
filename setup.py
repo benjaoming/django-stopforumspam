@@ -25,7 +25,7 @@ media_patterns = ( build_media_pattern("templates", "html") +
                    build_media_pattern("static", "png") +
                    build_media_pattern("static", "jpeg") +
                    build_media_pattern("static", "gif") +
-                   build_media_pattern("", "rst")
+                   build_media_pattern("", "md")
 )
 
 package_data = dict(
