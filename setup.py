@@ -42,7 +42,7 @@ setup(name='stopforumspam',
       packages=packages,
       license='BSD License',
       install_requires=[
-        'Django>=1.3.0',
+        'Django>=1.4.0',
       ],
       url='https://overtag.dk/',
       classifiers=CLASSIFIERS,
