@@ -34,9 +34,6 @@ Installation
 
     python manage.py sfsupdate
 
-You may remove stopforumspam from your INSTALLED_APPS after, if you do not
-wish to see it in your admin pages.
-
 
 -------------
 Configuration
