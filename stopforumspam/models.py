@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 class Cache(models.Model):
     
     updated = models.DateTimeField(auto_now=True, verbose_name=_(u"Updated"))
-    ip = models.IPAddressField(verbose_name=_(u"IP address"),)
+    ip = models.GenericIPAddressField(verbose_name=_(u"IP address"),)
     permanent = models.BooleanField(default=False, verbose_name=_(u"Permanent"))
     
     class Meta:
