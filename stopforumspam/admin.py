@@ -8,7 +8,7 @@ class LogAdmin(admin.ModelAdmin):
 class CacheAdmin(admin.ModelAdmin):
     list_display = ('ip', 'updated')
     list_filter = ('permanent', 'updated')
-    
+
 
 site = admin.site.register(models.Log, LogAdmin)
 site = admin.site.register(models.Cache, CacheAdmin)
