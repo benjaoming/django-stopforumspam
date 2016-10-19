@@ -1,6 +1,9 @@
 from setuptools import find_packages, setup
 
 
+from stopforumspam import __version__
+
+
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
     'Environment :: Web Environment',
@@ -21,7 +24,7 @@ setup(
     description='Django middleware for blocking IPs listed in stopforumspam.com',
     author="Benjamin Bach",
     author_email="benjamin@overtag.dk",
-    version='1.5',
+    version=__version__,
     packages=packages,
     license='BSD License',
     install_requires=[
