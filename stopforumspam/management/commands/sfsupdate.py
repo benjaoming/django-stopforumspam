@@ -1,7 +1,7 @@
+from __future__ import absolute_import, unicode_literals
+
 import re
-import urllib
 import zipfile
-from optparse import make_option
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -9,7 +9,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from ... import settings as sfs_settings
-from ... import models
+from ... import compat, models
 
 
 def safe_bulk_create(objs):
@@ -26,13 +26,16 @@ def safe_bulk_create(objs):
 
 
 class Command(BaseCommand):
-    args = '--force'
     help = 'Updates the database with the latest IPs from stopforumspam.com'
-    option_list = BaseCommand.option_list + (
-        make_option('--force', '-f', dest='force', default=False,
-                    action='store_true',
-                    help='Force update of options'),
-    )
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            dest='force',
+            default=False,
+            help='Force update of options',
+        )
 
     def handle(self, *args, **options):
         self.ensure_updated(options['force'])
@@ -55,7 +58,7 @@ class Command(BaseCommand):
         else:
             print("Nothing to update")
 
-    @transaction.commit_manually()
+    @compat.notrans
     def do_update(self):
         try:
             self._do_update()
@@ -77,14 +80,19 @@ class Command(BaseCommand):
         # address
         ip_match = re.compile(r"^(\d+)\.(\d+)\.(\d+)\.(\d+)$")
 
+
+        fileobject = None
         if sfs_settings.SOURCE_ZIP.startswith("file://"):
             filename = sfs_settings.SOURCE_ZIP.split("file://")[1]
+            fileobject = open(filename, "rb")
         else:
-            filename, __ = urllib.urlretrieve(sfs_settings.SOURCE_ZIP)
-        z = zipfile.ZipFile(filename)
-        ips = z.read(sfs_settings.ZIP_FILENAME)
+            response = compat.urllib.urlopen(sfs_settings.SOURCE_ZIP)
+            fileobject = response
+        z = zipfile.ZipFile(fileobject)
+        ips = str(z.read(sfs_settings.ZIP_FILENAME))
         ips = ips.split("\n")
         ips = filter(lambda x: ip_match.match(x), ips)
+        ips = list(ips)
         inserted = 0
         total = len(ips)
         objects_to_save = []
@@ -99,13 +107,6 @@ class Command(BaseCommand):
         print(" Saving to database ")
         print("====================")
 
-        if hasattr(models.Cache.objects, 'bulk_create'):
-            print(
-                "New django with bulk_create detected. Inserting everyting at once!")
-            safe_bulk_create(objects_to_save)
-        else:
-            print("Django<1.5, inserting one object at a time...")
-            for cnt, cache in enumerate(objects_to_save):
-                cache.save()
-                if cnt % 100 == 0:
-                    print("Object %d of %d saved" % (inserted, total))
+        safe_bulk_create(objects_to_save)
+
+        print("IPs from SFS saved to database")
