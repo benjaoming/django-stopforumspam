@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 import zipfile
+from io import BytesIO
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -10,19 +11,6 @@ from django.utils import timezone
 
 from ... import settings as sfs_settings
 from ... import compat, models
-
-
-def safe_bulk_create(objs):
-    """Wrapper to overcome the size limitation of standard bulk_create()"""
-    if len(objs) == 0:
-        return
-    if 'sqlite' not in settings.DATABASES['default']['ENGINE']:
-        objs[0].__class__.objects.bulk_create(objs)
-    else:
-        BULK_SIZE = 900 / len(objs[0].__class__._meta.fields)
-        for i in range(0, len(objs), BULK_SIZE):
-            print("SQLITE size limits: Bulk inserting %d objects" % BULK_SIZE)
-            objs[0].__class__.objects.bulk_create(objs[i:i + BULK_SIZE])
 
 
 class Command(BaseCommand):
@@ -36,11 +24,24 @@ class Command(BaseCommand):
             default=False,
             help='Force update of options',
         )
+        parser.add_argument(
+            '--quiet', '-q',
+            action='store_true',
+            dest='quiet',
+            default=False,
+            help='Do not produce output unless upon failure',
+        )
 
     def handle(self, *args, **options):
-        self.ensure_updated(options['force'])
+        self.quiet = options['quiet']
+        self.ensure_updated(force=options['force'])
 
-    def ensure_updated(self, force=False):
+    def print_output(self, msg):
+        if not self.quiet:
+            print(msg)
+
+    def ensure_updated(self, force=False, quiet=False):
+
         last_update = models.Log.objects.filter(
             message=sfs_settings.LOG_MESSAGE_UPDATE).order_by('-inserted')
         do_update = force
@@ -51,12 +52,12 @@ class Command(BaseCommand):
         else:
             do_update = True
         if do_update:
-            print("Updating (this may take some time)")
-            print(
+            self.print_output("Updating (this may take some time)")
+            self.print_output(
                 "If you abort this command and want to rebuild, you have to use the --force option!")
             self.do_update()
         else:
-            print("Nothing to update")
+            self.print_output("Nothing to update")
 
     @compat.notrans
     def do_update(self):
@@ -87,7 +88,9 @@ class Command(BaseCommand):
             fileobject = open(filename, "rb")
         else:
             response = compat.urllib.urlopen(sfs_settings.SOURCE_ZIP)
-            fileobject = response
+            # Necessary because ZipFile needs to do a seek() call on the
+            # file object which HttpResponse in python3 doesn't support.
+            fileobject = BytesIO(response.read())
         z = zipfile.ZipFile(fileobject)
         ips = str(z.read(sfs_settings.ZIP_FILENAME))
         ips = ips.split("\n")
@@ -101,12 +104,24 @@ class Command(BaseCommand):
             objects_to_save.append(cache)
             inserted = inserted + 1
             if inserted % 100 == 0:
-                print("Object %d of %d found" % (inserted, total))
+                self.print_output("Object %d of %d found" % (inserted, total))
 
-        print("====================")
-        print(" Saving to database ")
-        print("====================")
+        self.print_output("====================")
+        self.print_output(" Saving to database ")
+        self.print_output("====================")
 
-        safe_bulk_create(objects_to_save)
+        self.safe_bulk_create(objects_to_save)
 
-        print("IPs from SFS saved to database")
+        self.print_output("IPs from SFS saved to database")
+
+    def safe_bulk_create(self, objs):
+        """Wrapper to overcome the size limitation of standard bulk_create()"""
+        if len(objs) == 0:
+            return
+        if 'sqlite' not in settings.DATABASES['default']['ENGINE']:
+            objs[0].__class__.objects.bulk_create(objs)
+        else:
+            BULK_SIZE = 900 / len(objs[0].__class__._meta.fields)
+            for i in range(0, len(objs), BULK_SIZE):
+                self.print_output("SQLITE size limits: Bulk inserting %d objects" % BULK_SIZE)
+                objs[0].__class__.objects.bulk_create(objs[i:i + BULK_SIZE])

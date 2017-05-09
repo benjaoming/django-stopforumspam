@@ -117,10 +117,10 @@ You probably want to automatically update the list of blocked IP
 addresses every 24 hours or 48 hours. To do that, you can insert a line
 in crontab::
 
-    0 2 * * * python /your/project/path/manage.py sfsupdate
+    0 2 * * * python /your/project/path/manage.py sfsupdate -q
 
 The above would update at 2 AM every night. If you have several projects
 and sync them with a local file, you can add::
 
-    0 2 * * * wget -O /tmp/listed_ip_7.zip http://www.stopforumspam.com/downloads/listed_ip_7.zip ; python /your/project/path/manage.py sfsupdate
+    0 2 * * * wget -O /tmp/listed_ip_7.zip http://www.stopforumspam.com/downloads/listed_ip_7.zip ; python /your/project/path/manage.py sfsupdate -q
 
