@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 import zipfile
+from io import BytesIO
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -87,7 +88,9 @@ class Command(BaseCommand):
             fileobject = open(filename, "rb")
         else:
             response = compat.urllib.urlopen(sfs_settings.SOURCE_ZIP)
-            fileobject = response
+            # Necessary because ZipFile needs to do a seek() call on the
+            # file object which HttpResponse in python3 doesn't support.
+            fileobject = BytesIO(response.read())
         z = zipfile.ZipFile(fileobject)
         ips = str(z.read(sfs_settings.ZIP_FILENAME))
         ips = ips.split("\n")
