@@ -1,12 +1,13 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 from django.utils import ipv6
+from django.utils.deprecation import MiddlewareMixin
 
 from . import settings as sfs_settings
 from . import models
 
 
-class StopForumSpamMiddleware():
+class StopForumSpamMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
 
