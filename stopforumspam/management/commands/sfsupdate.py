@@ -79,7 +79,7 @@ class Command(BaseCommand):
 
         # For security purposes we test that each line is actually an IP
         # address
-        ip_match = re.compile(r"(\d+)\.(\d+)\.(\d+)\.(\d+)")
+        ip_pattern = re.compile(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
 
         fileobject = None
         if sfs_settings.SOURCE_ZIP.startswith("file://"):
@@ -98,8 +98,7 @@ class Command(BaseCommand):
         inserted = 0
         total = len(ips)
         objects_to_save = []
-        for ip in ip_match.findall(ips):
-            ip = ".".join(ip)
+        for ip in ip_pattern.findall(ips):
             cache = models.Cache(ip=ip)
             objects_to_save.append(cache)
             inserted = inserted + 1
