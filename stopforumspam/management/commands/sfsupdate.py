@@ -79,27 +79,26 @@ class Command(BaseCommand):
 
         # For security purposes we test that each line is actually an IP
         # address
-        ip_match = re.compile(r"^(\d+)\.(\d+)\.(\d+)\.(\d+)$")
-
+        ip_pattern = re.compile(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
 
         fileobject = None
         if sfs_settings.SOURCE_ZIP.startswith("file://"):
             filename = sfs_settings.SOURCE_ZIP.split("file://")[1]
+            self.print_output(" . Using: {}".format(filename))
             fileobject = open(filename, "rb")
         else:
+            self.print_output(" ^ Downloading: {}".format(sfs_settings.SOURCE_ZIP))
             response = compat.urllib.urlopen(sfs_settings.SOURCE_ZIP)
             # Necessary because ZipFile needs to do a seek() call on the
             # file object which HttpResponse in python3 doesn't support.
             fileobject = BytesIO(response.read())
         z = zipfile.ZipFile(fileobject)
+        self.print_output(" < Extracting: {}".format(sfs_settings.ZIP_FILENAME))
         ips = str(z.read(sfs_settings.ZIP_FILENAME))
-        ips = ips.split("\n")
-        ips = filter(lambda x: ip_match.match(x), ips)
-        ips = list(ips)
         inserted = 0
         total = len(ips)
         objects_to_save = []
-        for ip in ips:
+        for ip in ip_pattern.findall(ips):
             cache = models.Cache(ip=ip)
             objects_to_save.append(cache)
             inserted = inserted + 1
