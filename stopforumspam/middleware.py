@@ -1,10 +1,9 @@
-from django.urls import reverse
 from django.shortcuts import render
-from django.utils import ipv6
+from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 
-from . import settings as sfs_settings
 from . import models
+from . import settings as sfs_settings
 
 
 class StopForumSpamMiddleware(MiddlewareMixin):
@@ -36,8 +35,7 @@ class StopForumSpamMiddleware(MiddlewareMixin):
 
     def check_request_ip(self, request):
 
-        remote_ip = ipv6._unpack_ipv4(request.META[sfs_settings.HEADER])
-
+        remote_ip = request.META[sfs_settings.HEADER]
         cache_entries = models.Cache.objects.filter(ip=remote_ip)
 
         if cache_entries.count() > 0:

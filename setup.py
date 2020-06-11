@@ -1,5 +1,5 @@
-from setuptools import find_packages, setup
-
+from setuptools import find_packages
+from setuptools import setup
 
 from stopforumspam import __version__
 
@@ -28,7 +28,7 @@ setup(
     packages=packages,
     license='BSD License',
     install_requires=[
-        'Django>=1.7',
+        'Django>=1.9',
     ],
     url='https://overtag.dk/',
     classifiers=CLASSIFIERS,
