@@ -43,7 +43,7 @@ Installation
 
 4. And run::
 
-       python manage.py syncdb
+       python manage.py migrate
 
 5. To insert all the IPs run this command, which you should make a
    cronjob (run it every 24h)::
