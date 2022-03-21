@@ -30,7 +30,7 @@ setup(
     install_requires=[
         'Django>=1.9',
     ],
-    url='https://overtag.dk/',
+    url='https://github.com/benjaoming/django-stopforumspam',
     classifiers=CLASSIFIERS,
     include_package_data=True,
 )
