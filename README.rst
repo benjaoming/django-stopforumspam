@@ -22,7 +22,7 @@ permanent database.
 Compatibility
 -------------
 
-- Django 1.7+
+- Django 1.7 - 4.x
 - Python 2.7 and 3+
 
 
