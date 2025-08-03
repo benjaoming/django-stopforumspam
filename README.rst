@@ -18,6 +18,11 @@ Using this command, all IPs are stored in Django models, and using
 django-admin, it's possible to add your own extra IP addresses on a
 permanent database.
 
+Other solutions
+---------------
+
+You may also want a more generic solution, in that case have a look at [django-blocklist](https://gitlab.com/paul_bissex/django-blocklist).
+
 
 Compatibility
 -------------
